@@ -8,6 +8,10 @@ on:
       - 'magefiles/go.mod'
       - 'magefiles/go.sum'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 env:
   golang-version: '1.25'
 

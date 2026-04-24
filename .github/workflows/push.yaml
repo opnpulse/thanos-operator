@@ -1,4 +1,4 @@
-name: Build and Push Multi-Platform Image to Quay
+name: Build and Push Multi-Platform Image to GHCR
 
 on:
   push:
@@ -6,20 +6,28 @@ on:
       - 'main'
     tags:
       - 'v*'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Log in to Quay
-        uses: docker/login-action@v3
+      - name: Log in to the GitHub Container registry
+        uses: docker/login-action@v2
         with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -36,4 +44,6 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build and push multi-platform image
-        run: make docker-buildx 
+        run: |
+          export DOCKER_IMAGE_TAG=$(git describe --exact-match --abbrev=0 2>/dev/null || echo "")
+          make docker-buildx DOCKER_IMAGE_REPO=ghcr.io/opnpulse/thanos-operator PLATFORMS=linux/arm64,linux/amd64

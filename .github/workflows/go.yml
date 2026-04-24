@@ -10,6 +10,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
 env:
   golang-version: '1.26'
   kind-version: 'v0.30.0'
