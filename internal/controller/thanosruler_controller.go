@@ -190,14 +190,14 @@ func (r *ThanosRulerReconciler) syncResources(ctx context.Context, ruler monitor
 }
 
 func (r *ThanosRulerReconciler) buildRuler(ctx context.Context, ruler monitoringthanosiov1alpha1.ThanosRuler) (manifests.Buildable, []string, error) {
-	endpoints, err := r.getQueryAPIServiceEndpoints(ctx, ruler)
-	if err != nil {
-		return nil, nil, err
-	}
+	//endpoints, err := r.getQueryAPIServiceEndpoints(ctx, ruler)
+	//if err != nil {
+	//	return nil, nil, err
+	//}
 
-	if len(endpoints) == 0 {
-		return nil, nil, fmt.Errorf("no query API services found")
-	}
+	//if len(endpoints) == 0 {
+	//	return nil, nil, fmt.Errorf("no query API services found")
+	//}
 
 	// Get user-provided rule ConfigMaps.
 	ruleFiles, expectedUserConfigMapNames, err := r.getRuleConfigMaps(ctx, ruler)
@@ -246,7 +246,7 @@ func (r *ThanosRulerReconciler) buildRuler(ctx context.Context, ruler monitoring
 		FeatureGate:         r.featureGate,
 		ConfigReloaderImage: r.configReloaderImage,
 	})
-	opts.Endpoints = endpoints
+	//opts.Endpoints = endpoints
 	opts.RuleFiles = ruleFiles
 
 	return opts, expectedDerivedConfigMapNames, nil
