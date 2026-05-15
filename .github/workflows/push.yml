@@ -47,5 +47,5 @@ jobs:
 
       - name: Build and push multi-platform image
         run: |
-          export DOCKER_IMAGE_TAG=$(git describe --exact-match --abbrev=0 2>/dev/null || echo "")
+          export DOCKER_IMAGE_TAG=$(git describe --tags --exact-match --abbrev=0 2>/dev/null || echo "")
           make docker-buildx DOCKER_IMAGE_REPO=ghcr.io/opnpulse/thanos-operator PLATFORMS=linux/arm64,linux/amd64
